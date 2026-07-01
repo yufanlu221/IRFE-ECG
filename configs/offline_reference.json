@@ -1,0 +1,26 @@
+{
+  "description": "Matched offline independent-head reference",
+  "seeds": [42, 43, 44],
+  "prepare_feature_cache": false,
+  "environment": {
+    "ECG_DATA_DIR": "data/processed",
+    "ECG_CKPT_PATH": "checkpoints/1_lead_ECGFounder.pth",
+    "ECG_EPOCHS": "30",
+    "ECG_BATCH_SIZE": "32",
+    "ECG_LR": "0.001",
+    "ECG_WEIGHT_DECAY": "0.0001",
+    "ECG_LOSS": "balanced_softmax",
+    "ECG_CLASS_WEIGHT_MODE": "domain",
+    "ECG_SELECT_CALIBRATED_EPOCH": "1",
+    "ECG_NUM_WORKERS": "0",
+    "ECG_CPU_THREADS": "4"
+  },
+  "jobs": [
+    {
+      "name": "matched_offline_independent_heads",
+      "module": "trainer.joint_offline_baseline",
+      "output": "joint_offline_linear_seed{seed}_{tag}",
+      "environment": {"ECG_JOINT_HEAD_KIND": "linear"}
+    }
+  ]
+}

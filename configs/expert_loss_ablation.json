@@ -1,0 +1,25 @@
+{
+  "description": "Expert architecture and loss ablation",
+  "seeds": [42, 43, 44],
+  "prepare_feature_cache": false,
+  "environment": {
+    "ECG_DATA_DIR": "data/processed",
+    "ECG_CKPT_PATH": "checkpoints/1_lead_ECGFounder.pth",
+    "ECG_FEATURE_CACHE_DIR": "feature_cache",
+    "ECG_MAIN_RESULTS_ROOT": "outputs"
+  },
+  "jobs": [
+    {
+      "name": "expert_loss_ablation",
+      "module": "scripts.run_expert_loss_ablation",
+      "once": true,
+      "output": "expert_loss_ablation_{tag}",
+      "args": [
+        "--feature-cache-dir", "feature_cache",
+        "--main-results-root", "outputs",
+        "--output-dir", "outputs/expert_loss_ablation_{tag}",
+        "--seeds", "42", "43", "44"
+      ]
+    }
+  ]
+}

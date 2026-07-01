@@ -1,0 +1,13 @@
+component,setting,count,dimension_or_shape,dtype,trainable_parameters,estimated_memory_mib,notes
+linear_expert,per_domain,1,1024_to_2,float32,2050,,weights_and_bias
+linear_expert,four_domains,4,1024_to_2,float32,8200,,four_independent_experts
+domain_mlp_router,one_seen_domain,1,1024_to_128_to_1,float32,133377,,includes_affine_layernorm
+domain_mlp_router,two_seen_domains,1,1024_to_128_to_2,float32,133506,,includes_affine_layernorm
+domain_mlp_router,three_seen_domains,1,1024_to_128_to_3,float32,133635,,includes_affine_layernorm
+domain_mlp_router,four_seen_domains,1,1024_to_128_to_4,float32,133764,,includes_affine_layernorm
+retained_feature_memory,1_percent,358,1024,float32,,1.40,train_features_only
+retained_feature_memory,5_percent,1789,1024,float32,,6.99,train_features_only
+retained_feature_memory,10_percent,3579,1024,float32,,13.98,train_features_only
+retained_feature_memory,100_percent,35793,1024,float32,,139.82,train_features_only
+rough_raw_ecg,one_record,1,5000_samples,float32,,0.0191,about_19.5_KiB_uncompressed
+frozen_feature,one_record,1,1024,float32,,0.00391,4_KiB

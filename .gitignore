@@ -1,0 +1,53 @@
+# Data and licensed inputs
+data/
+datasets/
+feature_cache/
+
+# Model weights and generated experiment outputs
+checkpoints/
+outputs/
+runs/
+wandb/
+mlruns/
+*.pt
+*.pth
+*.ckpt
+*.safetensors
+*.onnx
+*.npy
+*.npz
+*.pkl
+*.h5
+*.hdf5
+
+# CSV files are ignored by default; only aggregate paper tables are allowed.
+*.csv
+!results/paper_tables/*.csv
+
+# Python, notebooks, test, and build caches
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.ipynb_checkpoints/
+*.egg-info/
+build/
+dist/
+
+# Local environments, credentials, editors, and OS files
+.env
+.env.*
+!.env.example
+.venv/
+venv/
+.codex_keys/
+*.pem
+id_rsa*
+id_ed25519*
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+*.log
+*.tmp

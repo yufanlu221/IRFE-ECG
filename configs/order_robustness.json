@@ -1,0 +1,51 @@
+{
+  "description": "Reverse and fixed-random domain-order robustness",
+  "seeds": [42, 43, 44],
+  "prepare_feature_cache": true,
+  "environment": {
+    "ECG_DATA_DIR": "data/processed",
+    "ECG_CKPT_PATH": "checkpoints/1_lead_ECGFounder.pth",
+    "ECG_FEATURE_CACHE_DIR": "feature_cache",
+    "ECG_EPOCHS": "30",
+    "ECG_BATCH_SIZE": "32",
+    "ECG_FEATURE_HEAD_BATCH_SIZE": "32",
+    "ECG_LR": "0.0005",
+    "ECG_WEIGHT_DECAY": "0.0001",
+    "ECG_LOSS": "balanced_softmax",
+    "ECG_CLASS_WEIGHT_MODE": "domain",
+    "ECG_FEATURE_HEAD_METHOD": "linear",
+    "ECG_SELECT_CALIBRATED_EPOCH": "1",
+    "ECG_FEATURE_ROUTER_DOMAIN_EPOCHS": "50",
+    "ECG_FEATURE_ROUTER_DOMAIN_LR": "0.001",
+    "ECG_FEATURE_ROUTER_DOMAIN_HIDDEN_DIM": "128",
+    "ECG_FEATURE_ROUTER_DOMAIN_DROPOUT": "0.10",
+    "ECG_FEATURE_ROUTER_DOMAIN_BATCH_SIZE": "512",
+    "ECG_FEATURE_ROUTER_TOPK": "2",
+    "ECG_FEATURE_ROUTER_SOFTMAX_TEMPERATURE": "1.0",
+    "ECG_FEATURE_ROUTER_KNN_K": "5",
+    "ECG_NUM_WORKERS": "0",
+    "ECG_CPU_THREADS": "2"
+  },
+  "jobs": [
+    {
+      "name": "reverse_order",
+      "module": "trainer.feature_router_prototypes",
+      "output": "feature_router_reverse_order_seed{seed}_mem1_{tag}",
+      "environment": {
+        "ECG_DOMAIN_ORDER": "chapman,georgia,ptbxl,cpsc",
+        "ECG_FEATURE_ROUTER_MEMORY_FRACTION": "1.0",
+        "ECG_FEATURE_ROUTER_MODES": "centroid_cosine,shrinkage_lda,domain_linear,domain_mlp,knn,domain_mlp_top2"
+      }
+    },
+    {
+      "name": "fixed_random_order",
+      "module": "trainer.feature_router_prototypes",
+      "output": "feature_router_random_order_seed{seed}_mem1_{tag}",
+      "environment": {
+        "ECG_DOMAIN_ORDER": "ptbxl,cpsc,chapman,georgia",
+        "ECG_FEATURE_ROUTER_MEMORY_FRACTION": "1.0",
+        "ECG_FEATURE_ROUTER_MODES": "centroid_cosine,shrinkage_lda,domain_linear,domain_mlp,knn,domain_mlp_top2"
+      }
+    }
+  ]
+}

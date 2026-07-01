@@ -1,0 +1,17 @@
+\begin{table}[t]
+\centering
+\caption{Feature-memory ablation for MLP top-2 routing. No raw ECG waveforms are replayed; the reported memory stores frozen 1024-dimensional float32 features for router updates.}
+\label{tab:feature_memory}
+\small
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{@{}rrrr@{}}
+\toprule
+Retained & Features & Memory (MiB) & Macro-F1 / Route acc. \\
+\midrule
+1% & 358 & 1.40 & $0.7620\pm0.0050$ / $0.6470\pm0.0106$ \\
+5% & 1789 & 6.99 & $0.7668\pm0.0073$ / $0.7279\pm0.0052$ \\
+10% & 3579 & 13.98 & $0.7719\pm0.0009$ / $0.7549\pm0.0062$ \\
+100% & 35793 & 139.82 & $0.7782\pm0.0022$ / $0.8153\pm0.0021$ \\
+\bottomrule
+\end{tabular}
+\end{table}
