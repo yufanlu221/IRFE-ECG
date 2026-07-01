@@ -1,14 +1,14 @@
 # Data and licensed inputs
-data/
-datasets/
-feature_cache/
+/data/
+/datasets/
+/feature_cache/
 
 # Model weights and generated experiment outputs
-checkpoints/
-outputs/
-runs/
-wandb/
-mlruns/
+/checkpoints/
+/outputs/
+/runs/
+/wandb/
+/mlruns/
 *.pt
 *.pth
 *.ckpt
