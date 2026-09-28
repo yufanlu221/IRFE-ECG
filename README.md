@@ -1,7 +1,10 @@
 # IRFE-ECG
 
 Code for the paper **"Separating Expert Retention from Autonomous Source
-Inference in Raw-ECG-Replay-Free Continual ECG Deployment"**.
+Inference in Raw-ECG-Replay-Free Continual ECG Deployment"**, accepted at
+**IEEE BIBM 2026**.
+
+Authors: Yufan Lu, Xinhui Liu, Chenyang Xu, Yuxi Zhou, and Hao Wang.
 
 ## Project overview
 
@@ -37,7 +40,9 @@ tests/                   Unit tests for core routing and baseline logic
 
 ## Environment setup
 
-Python 3.10 or 3.11 is recommended. For pip:
+Python 3.10 or 3.11 is recommended. Run commands from the repository root.
+Multiline commands below use Bash continuations (`\`); in PowerShell, put
+each command on one line. For pip:
 
 ```bash
 python -m venv .venv
@@ -62,8 +67,8 @@ PyTorch 2.4.0 build first, then install the remaining requirements.
 
 Raw ECG data, processed tensors, frozen feature caches, and pretrained weights
 are not distributed in this repository. Obtain the relevant public records
-from the PhysioNet/Computing in Cardiology Challenge 2021 sources and obtain
-the single-lead ECGFounder checkpoint from its official release, subject to
+from the [PhysioNet/Computing in Cardiology Challenge 2021 sources](https://physionet.org/content/challenge-2021/1.0.3/) and obtain
+the single-lead checkpoint from the [official ECGFounder release](https://github.com/PKUDigitalHealth/ECGFounder), subject to
 their respective terms.
 
 The default local layout is:
@@ -91,11 +96,13 @@ and leakage auditing:
 python -m scripts.download_physionet_challenge2021 --dest data/raw
 python -m scripts.build_cinc_processed_from_raw \
   --raw-root data/raw --output-dir data/processed --seed 42
-python -m scripts.audit_cinc_split_leakage --data-dir data/processed
+python -m scripts.audit_cinc_split_leakage --data-dir data/processed --fail-on-overlap
 ```
 
 The exact source archives and preprocessing choices must comply with the data
-providers' licenses. See `docs/DATA.md` for the expected contract.
+providers' licenses. See [docs/DATA.md](docs/DATA.md) for the tensor contract,
+grouping limitations, and the distinction between preparing compatible data
+and reproducing the original paper splits.
 
 ## Running experiments
 
@@ -105,7 +112,8 @@ List commands without running training:
 python scripts/run_suite.py --config configs/main_routing.json --dry-run
 ```
 
-Run the paper suites with the shared tag `paper`:
+Run the paper suites with the shared tag `paper`, after checking a seed-42
+smoke run as described in [docs/EXPERIMENTS.md](docs/EXPERIMENTS.md):
 
 ```bash
 # Main table: pooled head, centroid, kNN, LDA, linear/MLP routers,
@@ -169,6 +177,14 @@ Small aggregate reference tables and selected figures are retained under
 `results/`. Sample-level predictions, checkpoints, logs, and full run folders
 are intentionally excluded.
 
+These generators require the local run outputs, not just the aggregate CSVs
+in `results/`. The refined figure generator includes fixed paper values for
+the domain-wise gap panel and fixed numeric caption text; those parts are
+reference reproductions, not recomputed estimates for a new run.
+See [docs/EXPERIMENTS.md](docs/EXPERIMENTS.md) for output mapping and limitations.
+
+After installation, run the data-independent core tests with `python -m pytest -q`.
+
 ## Raw-ECG-replay-free, not memory-free
 
 The primary protocol does not retain or replay raw historical ECG waveforms
@@ -197,13 +213,13 @@ splits where reliable patient identifiers are available.
 ```bibtex
 @inproceedings{irfe_ecg2026,
   title     = {Separating Expert Retention from Autonomous Source Inference in Raw-ECG-Replay-Free Continual ECG Deployment},
-  author    = {Anonymous},
-  booktitle = {To appear},
+  author    = {Lu, Yufan and Liu, Xinhui and Xu, Chenyang and Zhou, Yuxi and Wang, Hao},
+  booktitle = {2026 IEEE International Conference on Bioinformatics and Biomedicine (BIBM)},
   year      = {2026}
 }
 ```
 
-Replace the placeholder metadata after publication.
+DOI and page numbers will be added when available.
 
 ## License and attribution
 

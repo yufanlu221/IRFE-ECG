@@ -3,7 +3,7 @@ import pandas as pd
 import torch.nn as nn
 import torch.nn.functional as F
 import json
-from net1d import Net1D
+from .net1d import Net1D
 
 import torch.nn as nn
 import torch

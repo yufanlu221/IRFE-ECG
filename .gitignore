@@ -1,5 +1,5 @@
 # Data and licensed inputs
-data/
+/data/
 datasets/
 feature_cache/
 

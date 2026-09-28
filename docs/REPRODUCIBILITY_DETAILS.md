@@ -1,6 +1,10 @@
 # Reproducibility Details
 
-This document records settings found in the current code and the fixed seed-42 primary configuration. Items not represented in the current code or config are marked explicitly.
+This document records settings in the current code and `configs/main_routing.json`
+for seeds 42, 43, and 44. Items not represented in the current code or config
+are marked explicitly. The expert checkpoint criterion below refers to the
+primary router expert bank in `trainer.feature_router_prototypes`; other
+baselines can use validation-calibrated epoch selection.
 
 ## 1. Domain MLP router
 
