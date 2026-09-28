@@ -1,18 +1,19 @@
 """
-CinC2021 持续学习数据集加载器
-=============================
-从预处理好的 .pt 文件中加载各数据域的 ECG 信号与标签，
-为持续学习训练循环提供按域索引的 DataLoader。
+CinC2021 continual learning dataset loader
+=========================================
+Load ECG signals and labels for each domain from preprocessed .pt files,
+providing domain-indexed DataLoaders for continual learning training loops.
 
-数据格式（.pt 文件）:
-  {"x": (N, 1, L) float32 tensor  — 单导联 ECG 信号
-   "y": (N,)    int64   tensor  — 标签 (0=Normal, 1=Abnormal)}
+Data format (.pt files):
+  {"x": (N, 1, L) float32 tensor  — single-lead ECG signals
+   "y": (N,)    int64   tensor  — labels (0=Normal, 1=Abnormal)}
 
-注意:
-  当前缓存按 Normal/Abnormal 二分类读取：只有 Dx 集合等于正常窦性心律
-  SNOMED code 426783006 时为 0，其余任意非正常诊断代码为 1。
+Note:
+  Current caches use binary Normal/Abnormal labels: 0 only when the Dx set
+  contains solely the normal sinus rhythm SNOMED code 426783006; any
+  non-normal diagnosis code results in label 1.
 
-用法:
+Usage:
   from data.loaders.cinc_dataset import get_cinc_dataloaders
 
   train_loaders, test_loaders = get_cinc_dataloaders(
@@ -32,15 +33,15 @@ from torch.utils.data import TensorDataset, DataLoader
 
 
 # ══════════════════════════════════════════════════════════════════
-#  域配置
+#  Domain configuration
 # ══════════════════════════════════════════════════════════════════
 
-# 持续学习任务顺序（域标识符，与 continual_cl.py 对齐）
+# Continual learning task order (domain identifiers aligned with continual_cl.py)
 DOMAIN_NAMES: List[str] = [
     "cpsc", "ptbxl", "georgia", "chapman", "ptb", "ningbo"
 ]
 
-# 域标识符 → .pt 文件名前缀
+# Domain identifier → .pt filename prefix
 DOMAIN_TO_FILE: Dict[str, str] = {
     "cpsc":    "Task1_CPSC",
     "ptbxl":   "Task2_PTBXL",
@@ -62,7 +63,7 @@ STRICT_LABEL_METADATA_DEFAULT = (
 
 
 # ══════════════════════════════════════════════════════════════════
-#  内部工具
+#  Internal helpers
 # ══════════════════════════════════════════════════════════════════
 
 def _validate_label_metadata(data: dict, pt_path: Path, strict: bool) -> None:
@@ -95,7 +96,7 @@ def _load_single_pt(
     pt_path: str,
     strict_label_metadata: bool = STRICT_LABEL_METADATA_DEFAULT,
 ) -> TensorDataset:
-    """加载单个 .pt 文件为 TensorDataset。"""
+    """Load a single .pt file as a TensorDataset."""
     path = Path(pt_path)
     with path.open("rb") as f:
         data = torch.load(f, map_location="cpu", weights_only=False)
@@ -106,7 +107,7 @@ def _load_single_pt(
 
 
 # ══════════════════════════════════════════════════════════════════
-#  公开 API
+#  Public API
 # ══════════════════════════════════════════════════════════════════
 
 def get_cinc_dataloaders(
@@ -119,14 +120,14 @@ def get_cinc_dataloaders(
     seed: Optional[int] = None,
 ) -> Tuple[Dict[str, DataLoader], Dict[str, DataLoader]]:
     """
-    为每个域创建 train / test DataLoader。
+    Create training and test DataLoaders for each domain.
 
     Args:
-        data_dir:   存放 .pt 文件的目录路径
-        domains:    要加载的域列表，默认 DOMAIN_NAMES 全部 6 个
-        batch_size: batch 大小
-        num_workers:DataLoader worker 数（Windows 下须设为 0）
-        pin_memory: 是否 pin_memory（GPU 训练建议开启）
+        data_dir: Directory containing the .pt files.
+        domains: Domains to load; defaults to all six entries in DOMAIN_NAMES.
+        batch_size: Batch size.
+        num_workers: Number of DataLoader workers (set to 0 on Windows).
+        pin_memory: Whether to pin memory (recommended for GPU training).
 
     Returns:
         (train_loaders, test_loaders)
@@ -134,7 +135,7 @@ def get_cinc_dataloaders(
           - test_loaders[domain]  → DataLoader (shuffle=False)
 
     Raises:
-        FileNotFoundError: .pt 文件缺失时抛出
+        FileNotFoundError: If a required .pt file is missing.
     """
     data_path = Path(data_dir)
     domains = domains if domains is not None else DOMAIN_NAMES
@@ -144,16 +145,16 @@ def get_cinc_dataloaders(
 
     for domain_index, domain in enumerate(domains):
         if domain not in DOMAIN_TO_FILE:
-            raise ValueError(f"未知域: {domain}，可选: {list(DOMAIN_TO_FILE)}")
+            raise ValueError(f"Unknown domain: {domain}, available domains: {list(DOMAIN_TO_FILE)}")
         file_prefix = DOMAIN_TO_FILE[domain]
 
         train_pt = data_path / f"{file_prefix}_train.pt"
         test_pt  = data_path / f"{file_prefix}_test.pt"
 
         if not train_pt.exists():
-            raise FileNotFoundError(f"训练数据缺失: {train_pt}")
+            raise FileNotFoundError(f"Missing training data: {train_pt}")
         if not test_pt.exists():
-            raise FileNotFoundError(f"测试数据缺失: {test_pt}")
+            raise FileNotFoundError(f"Missing test data: {test_pt}")
 
         train_ds = _load_single_pt(str(train_pt), strict_label_metadata)
         test_ds  = _load_single_pt(str(test_pt), strict_label_metadata)
@@ -192,26 +193,26 @@ def get_single_loader(
     **kwargs,
 ) -> DataLoader:
     """
-    加载单个域的单个 DataLoader，便于单域调试。
+    Create a DataLoader for a single domain to simplify domain-specific debugging.
 
     Args:
-        data_dir:   .pt 文件目录
-        domain:     域标识符，如 "cpsc"
-        mode:       "train" 或 "test"
-        batch_size: batch 大小
-        **kwargs:   透传给 DataLoader 的额外参数
+        data_dir: Directory containing the .pt files.
+        domain: Domain identifier, such as "cpsc".
+        mode: "train" or "test".
+        batch_size: Batch size.
+        **kwargs: Additional arguments passed to DataLoader.
 
     Returns:
-        DataLoader 实例
+        A DataLoader instance.
     """
     data_path = Path(data_dir)
     if domain not in DOMAIN_TO_FILE:
-        raise ValueError(f"未知域: {domain}，可选: {list(DOMAIN_TO_FILE)}")
+        raise ValueError(f"Unknown domain: {domain}, available domains: {list(DOMAIN_TO_FILE)}")
     file_prefix = DOMAIN_TO_FILE[domain]
     pt_path = data_path / f"{file_prefix}_{mode}.pt"
 
     if not pt_path.exists():
-        raise FileNotFoundError(f"数据文件缺失: {pt_path}")
+        raise FileNotFoundError(f"Missing data file: {pt_path}")
 
     ds = _load_single_pt(str(pt_path), strict_label_metadata)
     shuffle = (mode == "train")
